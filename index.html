@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>G. Escobar — Matemática · Datos · IA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --verde-raiz:   #2C4A3E;
+      --verde-salvia: #7CB99A;
+      --crema:        #F5EDE0;
+      --crema-oscura: #EDE0CE;
+      --terracota:    #C0956A;
+      --dorado:       #8A6240;
+      --dorado-claro: #C4A882;
+      --texto:        #1E2E28;
+      --texto-suave:  #4A6B5A;
+      --texto-leve:   #7A9B8A;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--crema);
+      color: var(--texto);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(245, 237, 224, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 0.5px solid rgba(138, 98, 64, 0.15);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo-text { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 500; color: var(--verde-raiz); letter-spacing: 2px; }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 13px; color: var(--texto-suave); text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--verde-raiz); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 120px 48px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      opacity: 0.07;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 680px; }
+    .hero-eyebrow {
+      font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--dorado); margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(42px, 6vw, 72px);
+      font-weight: 400; line-height: 1.1;
+      color: var(--verde-raiz);
+      margin-bottom: 28px;
+    }
+    .hero-title em { font-style: italic; color: var(--terracota); }
+    .hero-desc {
+      font-size: 17px; font-weight: 300; line-height: 1.8;
+      color: var(--texto-suave); max-width: 520px;
+      margin-bottom: 40px;
+    }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+      letter-spacing: 0.08em; text-decoration: none;
+      background: var(--verde-raiz); color: var(--crema);
+      padding: 13px 28px; border-radius: 2px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #1A3028; transform: translateY(-1px); }
+    .btn-secondary {
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400;
+      letter-spacing: 0.08em; text-decoration: none;
+      border: 0.5px solid var(--dorado); color: var(--dorado);
+      padding: 13px 28px; border-radius: 2px;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(138,98,64,0.08); }
+
+    .hero-flower {
+      position: absolute; right: 6%; top: 50%; transform: translateY(-50%);
+      opacity: 0.18; pointer-events: none;
+    }
+
+    /* scatter points decoration hero */
+    .hero-scatter {
+      position: absolute; bottom: 80px; left: 48px;
+      display: flex; align-items: flex-end; gap: 6px;
+    }
+    .scatter-dot {
+      width: 5px; border-radius: 50%;
+      background: var(--terracota); opacity: 0.4;
+    }
+
+    /* ─── SECTIONS COMMONS ─── */
+    section { padding: 96px 48px; }
+    .section-label {
+      font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--dorado); margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif; font-size: clamp(28px, 3.5vw, 42px);
+      font-weight: 400; color: var(--verde-raiz); line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .section-title em { font-style: italic; color: var(--terracota); }
+    .wave-divider {
+      width: 100%; height: 2px; position: relative;
+      background: transparent; overflow: visible;
+      margin: 0;
+    }
+
+    /* ─── SOBRE MÍ ─── */
+    .sobre { background: var(--verde-raiz); color: var(--crema); }
+    .sobre .section-label { color: var(--dorado-claro); }
+    .sobre .section-title { color: var(--crema); }
+    .sobre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .sobre-desc { font-size: 16px; font-weight: 300; line-height: 1.9; color: rgba(245,237,224,0.85); margin-bottom: 28px; }
+    .sobre-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      font-size: 11px; letter-spacing: 0.1em;
+      border: 0.5px solid rgba(124,185,154,0.4);
+      color: var(--verde-salvia);
+      padding: 5px 14px; border-radius: 99px;
+    }
+    .sobre-visual { display: flex; justify-content: center; align-items: center; }
+    .sobre-formula {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 22px; color: rgba(245,237,224,0.6);
+      line-height: 2; text-align: center;
+    }
+    .sobre-formula span { color: var(--verde-salvia); font-style: normal; font-size: 14px; display: block; margin-top: 16px; letter-spacing: 0.1em; }
+
+    /* ─── PROYECTOS ─── */
+    .proyectos { background: var(--crema); }
+    .proyectos-intro { font-size: 16px; color: var(--texto-suave); max-width: 540px; margin-bottom: 48px; font-weight: 300; }
+    .proyectos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .proyecto-card {
+      background: white; border-radius: 4px;
+      border: 0.5px solid rgba(138,98,64,0.15);
+      overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+      display: flex; flex-direction: column;
+    }
+    .proyecto-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(44,74,62,0.1); }
+    .proyecto-card.featured { border-color: var(--verde-salvia); border-width: 1px; }
+    .proyecto-header { padding: 28px 24px 20px; flex: 1; }
+    .proyecto-badge {
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--verde-salvia); margin-bottom: 14px;
+    }
+    .proyecto-card.featured .proyecto-badge { color: var(--terracota); }
+    .proyecto-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--verde-raiz); margin-bottom: 10px; line-height: 1.3; }
+    .proyecto-desc { font-size: 13px; color: var(--texto-suave); line-height: 1.7; font-weight: 300; }
+    .proyecto-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 24px 20px; }
+    .proyecto-tag {
+      font-size: 10px; letter-spacing: 0.08em;
+      background: var(--crema); color: var(--dorado);
+      border: 0.5px solid var(--dorado-claro);
+      padding: 3px 10px; border-radius: 99px;
+    }
+    .proyecto-footer { padding: 16px 24px; border-top: 0.5px solid rgba(138,98,64,0.1); }
+    .proyecto-link { font-size: 12px; color: var(--verde-raiz); text-decoration: none; font-weight: 500; letter-spacing: 0.04em; }
+    .proyecto-link:hover { color: var(--terracota); }
+
+    /* ─── APRENDIENDO IA ─── */
+    .aprendiendo { background: var(--crema-oscura); }
+    .aprendiendo-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: start; }
+    .aprendiendo-intro { font-size: 15px; color: var(--texto-suave); font-weight: 300; line-height: 1.9; margin-bottom: 24px; }
+    .aprendiendo-quote {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 18px; color: var(--verde-raiz);
+      border-left: 2px solid var(--verde-salvia);
+      padding-left: 20px; line-height: 1.6;
+    }
+    .bitacora { display: flex; flex-direction: column; gap: 16px; }
+    .bitacora-entry {
+      background: white; border-radius: 4px;
+      border: 0.5px solid rgba(138,98,64,0.12);
+      padding: 20px 22px;
+    }
+    .entry-date { font-size: 10px; letter-spacing: 0.14em; color: var(--dorado); margin-bottom: 6px; }
+    .entry-title { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--verde-raiz); margin-bottom: 6px; }
+    .entry-desc { font-size: 13px; color: var(--texto-suave); line-height: 1.6; font-weight: 300; }
+    .entry-placeholder { opacity: 0.45; border-style: dashed; }
+
+    /* ─── CONTACTO ─── */
+    .contacto { background: var(--verde-raiz); text-align: center; }
+    .contacto .section-label { color: var(--dorado-claro); }
+    .contacto .section-title { color: var(--crema); }
+    .contacto-desc { font-size: 16px; color: rgba(245,237,224,0.7); font-weight: 300; max-width: 460px; margin: 0 auto 48px; }
+    .social-row { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 48px; }
+    .social-btn {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 400; letter-spacing: 0.06em;
+      text-decoration: none; color: var(--crema);
+      border: 0.5px solid rgba(245,237,224,0.25);
+      padding: 12px 24px; border-radius: 2px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .social-btn:hover { background: rgba(245,237,224,0.08); border-color: rgba(245,237,224,0.5); }
+    .social-icon { width: 18px; height: 18px; opacity: 0.7; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #1A2E24; padding: 32px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 14px; color: rgba(245,237,224,0.5); letter-spacing: 2px; }
+    .footer-wave { opacity: 0.3; }
+    .footer-copy { font-size: 11px; color: rgba(245,237,224,0.3); letter-spacing: 0.08em; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { gap: 20px; }
+      section { padding: 72px 24px; }
+      .hero { padding: 100px 24px 72px; }
+      .hero-flower { display: none; }
+      .sobre-grid, .aprendiendo-grid { grid-template-columns: 1fr; gap: 40px; }
+      .proyectos-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <a class="nav-logo" href="#inicio">
+    <svg width="28" height="28" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="36" cy="36" r="34" fill="#F5EDE0"/>
+      <ellipse cx="36" cy="36" rx="7" ry="17" transform="rotate(0 36 36)" fill="#4A8C70" opacity="0.72"/>
+      <ellipse cx="36" cy="36" rx="7" ry="17" transform="rotate(45 36 36)" fill="#C0956A" opacity="0.65"/>
+      <ellipse cx="36" cy="36" rx="7" ry="17" transform="rotate(90 36 36)" fill="#4A8C70" opacity="0.72"/>
+      <ellipse cx="36" cy="36" rx="7" ry="17" transform="rotate(135 36 36)" fill="#C0956A" opacity="0.65"/>
+      <ellipse cx="36" cy="36" rx="7" ry="17" transform="rotate(180 36 36)" fill="#4A8C70" opacity="0.72"/>
+      <ellipse cx="36" cy="36" rx="7" ry="17" transform="rotate(225 36 36)" fill="#C0956A" opacity="0.65"/>
+      <ellipse cx="36" cy="36" rx="7" ry="17" transform="rotate(270 36 36)" fill="#4A8C70" opacity="0.72"/>
+      <ellipse cx="36" cy="36" rx="7" ry="17" transform="rotate(315 36 36)" fill="#C0956A" opacity="0.65"/>
+      <circle cx="36" cy="36" r="6" fill="#8A6240" opacity="0.9"/>
+      <circle cx="36" cy="36" r="2" fill="#F5EDE0"/>
+    </svg>
+    <span class="nav-logo-text">G. ESCOBAR</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre mí</a></li>
+    <li><a href="#proyectos">Proyectos</a></li>
+    <li><a href="#aprendiendo">Aprendiendo IA</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero" id="inicio">
+
+  <!-- fondo botánico grande -->
+  <svg class="hero-flower" width="520" height="520" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="260" cy="260" rx="65" ry="155" transform="rotate(0 260 260)" fill="#4A8C70"/>
+    <ellipse cx="260" cy="260" rx="65" ry="155" transform="rotate(22.5 260 260)" fill="#C0956A"/>
+    <ellipse cx="260" cy="260" rx="65" ry="155" transform="rotate(45 260 260)" fill="#4A8C70"/>
+    <ellipse cx="260" cy="260" rx="65" ry="155" transform="rotate(67.5 260 260)" fill="#C0956A"/>
+    <ellipse cx="260" cy="260" rx="65" ry="155" transform="rotate(90 260 260)" fill="#4A8C70"/>
+    <ellipse cx="260" cy="260" rx="65" ry="155" transform="rotate(112.5 260 260)" fill="#C0956A"/>
+    <ellipse cx="260" cy="260" rx="65" ry="155" transform="rotate(135 260 260)" fill="#4A8C70"/>
+    <ellipse cx="260" cy="260" rx="65" ry="155" transform="rotate(157.5 260 260)" fill="#C0956A"/>
+    <circle cx="260" cy="260" r="50" fill="#8A6240"/>
+    <circle cx="260" cy="260" r="18" fill="#F5EDE0"/>
+  </svg>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Gabriela Escobar · Matemática</p>
+    <h1 class="hero-title">
+      Donde las<br>
+      ecuaciones<br>
+      <em>echan raíces</em>
+    </h1>
+    <p class="hero-desc">
+      Encuentro entre la precisión matemática y los sistemas vivos. Explorando datos, aprendiendo IA y buscando los patrones que conectan los números con el mundo natural.
+    </p>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="#proyectos">Ver proyectos</a>
+      <a class="btn-secondary" href="#contacto">Escribirme</a>
+    </div>
+  </div>
+
+  <!-- scatter dots decorativos -->
+  <div class="hero-scatter">
+    <div class="scatter-dot" style="height:8px;"></div>
+    <div class="scatter-dot" style="height:14px;"></div>
+    <div class="scatter-dot" style="height:10px; background:var(--verde-salvia);"></div>
+    <div class="scatter-dot" style="height:18px;"></div>
+    <div class="scatter-dot" style="height:12px; background:var(--verde-salvia);"></div>
+    <div class="scatter-dot" style="height:22px;"></div>
+    <div class="scatter-dot" style="height:16px; background:var(--verde-salvia);"></div>
+    <div class="scatter-dot" style="height:26px;"></div>
+    <div class="scatter-dot" style="height:20px; background:var(--verde-salvia);"></div>
+    <div class="scatter-dot" style="height:30px;"></div>
+  </div>
+
+</section>
+
+<!-- ─── SOBRE MÍ ─── -->
+<section class="sobre" id="sobre">
+  <div class="sobre-grid">
+    <div>
+      <p class="section-label">Sobre mí</p>
+      <h2 class="section-title">Matemática<br><em>con alma curiosa</em></h2>
+      <p class="sobre-desc">
+        Soy Gabriela Escobar, matemática en constante aprendizaje. Me apasionan los datos — la forma en que los números esconden historias que necesitan ser leídas con paciencia y método.
+      </p>
+      <p class="sobre-desc">
+        Estoy construyendo mi camino hacia la inteligencia artificial desde la base matemática: entendiendo los modelos, explorando las herramientas y registrando lo que aprendo. También me gustan las plantas y los animales, y creo que la naturaleza es la mejor maestra de sistemas complejos.
+      </p>
+      <div class="sobre-tags">
+        <span class="tag">Matemática</span>
+        <span class="tag">Análisis de datos</span>
+        <span class="tag">Aprendiendo IA</span>
+        <span class="tag">Aprendizaje continuo</span>
+        <span class="tag">Botánica</span>
+        <span class="tag">Sistemas complejos</span>
+      </div>
+    </div>
+    <div class="sobre-visual">
+      <div style="text-align:center;">
+        <svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="90" cy="90" rx="22" ry="52" transform="rotate(0 90 90)" fill="#7CB99A" opacity="0.5"/>
+          <ellipse cx="90" cy="90" rx="22" ry="52" transform="rotate(45 90 90)" fill="#C0956A" opacity="0.42"/>
+          <ellipse cx="90" cy="90" rx="22" ry="52" transform="rotate(90 90 90)" fill="#7CB99A" opacity="0.5"/>
+          <ellipse cx="90" cy="90" rx="22" ry="52" transform="rotate(135 90 90)" fill="#C0956A" opacity="0.42"/>
+          <ellipse cx="90" cy="90" rx="22" ry="52" transform="rotate(180 90 90)" fill="#7CB99A" opacity="0.5"/>
+          <ellipse cx="90" cy="90" rx="22" ry="52" transform="rotate(225 90 90)" fill="#C0956A" opacity="0.42"/>
+          <ellipse cx="90" cy="90" rx="22" ry="52" transform="rotate(270 90 90)" fill="#7CB99A" opacity="0.5"/>
+          <ellipse cx="90" cy="90" rx="22" ry="52" transform="rotate(315 90 90)" fill="#C0956A" opacity="0.42"/>
+          <circle cx="90" cy="90" r="19" fill="#8A6240" opacity="0.85"/>
+          <circle cx="90" cy="90" r="7" fill="rgba(245,237,224,0.6)"/>
+        </svg>
+        <p class="sobre-formula">
+          f(curiosidad) = datos<br>
+          g(datos) = patrones<br>
+          h(patrones) = comprensión
+          <span>— el proceso que me mueve</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROYECTOS ─── -->
+<section class="proyectos" id="proyectos">
+  <p class="section-label">Proyectos</p>
+  <h2 class="section-title">Lo que he <em>construido</em></h2>
+  <p class="proyectos-intro">Cada proyecto es una pregunta que decidí no dejar sin responder. Algunos son análisis formales, otros son experimentos de aprendizaje. Todos son míos.</p>
+
+  <div class="proyectos-grid">
+
+    <!-- PROYECTO 1 — Clasificador de Prendas -->
+    <div class="proyecto-card featured">
+      <div class="proyecto-header">
+        <p class="proyecto-badge">★ Proyecto académico · IA</p>
+        <h3 class="proyecto-title">Clasificador de Prendas con CNN</h3>
+        <p class="proyecto-desc">Red neuronal convolucional entrenada con TensorFlow y Keras para identificar 24 categorías de ropa en e-commerce. Logró ≥ 95% de accuracy tras fine-tuning sobre 11,385 imágenes. Incluye demo interactiva en tiempo real.</p>
+      </div>
+      <div class="proyecto-tags">
+        <span class="proyecto-tag">TensorFlow</span>
+        <span class="proyecto-tag">Keras</span>
+        <span class="proyecto-tag">Python</span>
+        <span class="proyecto-tag">CNN</span>
+        <span class="proyecto-tag">Data Augmentation</span>
+      </div>
+      <div class="proyecto-footer" style="display:flex; justify-content:space-between; align-items:center;">
+        <a class="proyecto-link" href="https://gasu021.github.io/ClasificadorRopa/" target="_blank">Ver proyecto →</a>
+        <span style="font-size:11px; color:var(--dorado-claro); letter-spacing:0.06em;">≥ 95% accuracy</span>
+      </div>
+    </div>
+
+    <!-- PROYECTO 2 — Bitcoin Sentiment (próximamente) -->
+    <div class="proyecto-card" style="border-color:var(--verde-salvia); border-width:1px;">
+      <div class="proyecto-header">
+        <p class="proyecto-badge" style="color:var(--verde-salvia);">⟳ En construcción</p>
+        <h3 class="proyecto-title">Sentimiento vs Precio del Bitcoin</h3>
+        <p class="proyecto-desc">¿Puede el tono de las noticias predecir movimientos en el precio de BTC? Análisis de correlación entre sentimiento en medios y variaciones del mercado cripto usando NLP.</p>
+      </div>
+      <div class="proyecto-tags">
+        <span class="proyecto-tag">NLP</span>
+        <span class="proyecto-tag">Análisis de sentimiento</span>
+        <span class="proyecto-tag">Python</span>
+        <span class="proyecto-tag">Series de tiempo</span>
+      </div>
+      <div class="proyecto-footer">
+        <span style="font-size:12px; color:var(--texto-leve); font-style:italic;">Próximamente</span>
+      </div>
+    </div>
+
+    <!-- PROYECTO 3 — Placeholder -->
+    <div class="proyecto-card" style="opacity:0.55; border-style:dashed;">
+      <div class="proyecto-header">
+        <p class="proyecto-badge">Próximamente</p>
+        <h3 class="proyecto-title">Análisis exploratorio de datos</h3>
+        <p class="proyecto-desc">Un EDA completo — el proceso de hacer preguntas antes de tener respuestas. Visualizaciones, estadística descriptiva y hallazgos inesperados.</p>
+      </div>
+      <div class="proyecto-tags">
+        <span class="proyecto-tag">EDA</span>
+        <span class="proyecto-tag">Pandas</span>
+        <span class="proyecto-tag">Matplotlib</span>
+      </div>
+      <div class="proyecto-footer">
+        <span style="font-size:12px; color:var(--texto-leve); font-style:italic;">En construcción</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── APRENDIENDO IA ─── -->
+<section class="aprendiendo" id="aprendiendo">
+  <div class="aprendiendo-grid">
+    <div>
+      <p class="section-label">Aprendiendo IA</p>
+      <h2 class="section-title">Una bitácora<br><em>en proceso</em></h2>
+      <p class="aprendiendo-intro">
+        No finjo saber más de lo que sé. Este espacio es el registro honesto de alguien que viene de la matemática pura y está aprendiendo a ver el mundo también desde los datos y los modelos.
+      </p>
+      <blockquote class="aprendiendo-quote">
+        "Aprender IA siendo matemática es como descubrir que ya hablabas el idioma — solo faltaba aprenderlo en voz alta."
+      </blockquote>
+    </div>
+
+    <div class="bitacora">
+      <!-- ENTRADA REAL — reemplaza con la tuya -->
+      <div class="bitacora-entry">
+        <p class="entry-date">ENTRADA MÁS RECIENTE</p>
+        <h4 class="entry-title">
+          <!-- ✏️ REEMPLAZA: título de tu entrada real -->
+          Lo que aprendí esta semana sobre redes neuronales
+        </h4>
+        <p class="entry-desc">
+          <!-- ✏️ REEMPLAZA: tu reflexión real -->
+          Escribe aquí lo que aprendiste, lo que te costó entender, o lo que te sorprendió. La honestidad es el diferenciador.
+        </p>
+      </div>
+
+      <div class="bitacora-entry entry-placeholder">
+        <p class="entry-date">PRÓXIMA ENTRADA</p>
+        <h4 class="entry-title">¿Qué es realmente el gradiente descendente?</h4>
+        <p class="entry-desc">Una explicación desde la intuición matemática — sin esconder las derivadas parciales.</p>
+      </div>
+
+      <div class="bitacora-entry entry-placeholder">
+        <p class="entry-date">PRÓXIMA ENTRADA</p>
+        <h4 class="entry-title">Mis primeras semanas con Python para datos</h4>
+        <p class="entry-desc">Lo que nadie te dice cuando empiezas: el ambiente de trabajo importa tanto como el código.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACTO ─── -->
+<section class="contacto" id="contacto">
+  <p class="section-label">Contacto</p>
+  <h2 class="section-title">Hablemos de<br><em>datos, ideas o plantas</em></h2>
+  <p class="contacto-desc">
+    Estoy abierta a colaboraciones, conversaciones y proyectos que mezclen matemática, datos y curiosidad genuina.
+  </p>
+
+  <div class="social-row">
+    <a class="social-btn" href="https://linkedin.com/in/tu-perfil" target="_blank">
+      <!-- LinkedIn icon -->
+      <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/>
+      </svg>
+      LinkedIn
+    </a>
+    <a class="social-btn" href="https://github.com/tu-usuario" target="_blank">
+      <!-- GitHub icon -->
+      <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+      </svg>
+      GitHub
+    </a>
+    <a class="social-btn" href="mailto:tu@email.com">
+      <!-- Mail icon -->
+      <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+      </svg>
+      Correo
+    </a>
+  </div>
+
+  <!-- flor pequeña decorativa -->
+  <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="opacity:0.25; margin: 0 auto; display: block;">
+    <ellipse cx="30" cy="30" rx="6" ry="14" transform="rotate(0 30 30)" fill="#7CB99A"/>
+    <ellipse cx="30" cy="30" rx="6" ry="14" transform="rotate(45 30 30)" fill="#C0956A"/>
+    <ellipse cx="30" cy="30" rx="6" ry="14" transform="rotate(90 30 30)" fill="#7CB99A"/>
+    <ellipse cx="30" cy="30" rx="6" ry="14" transform="rotate(135 30 30)" fill="#C0956A"/>
+    <ellipse cx="30" cy="30" rx="6" ry="14" transform="rotate(180 30 30)" fill="#7CB99A"/>
+    <ellipse cx="30" cy="30" rx="6" ry="14" transform="rotate(225 30 30)" fill="#C0956A"/>
+    <ellipse cx="30" cy="30" rx="6" ry="14" transform="rotate(270 30 30)" fill="#7CB99A"/>
+    <ellipse cx="30" cy="30" rx="6" ry="14" transform="rotate(315 30 30)" fill="#C0956A"/>
+    <circle cx="30" cy="30" r="5" fill="#8A6240" opacity="0.8"/>
+    <circle cx="30" cy="30" r="1.8" fill="#F5EDE0" opacity="0.5"/>
+  </svg>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <span class="footer-logo">G. ESCOBAR</span>
+  <svg class="footer-wave" width="120" height="16" viewBox="0 0 120 16" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,8 Q10,3 20,8 Q30,13 40,8 Q50,3 60,8 Q70,13 80,8 Q90,3 100,8 Q110,13 120,8" fill="none" stroke="#7CB99A" stroke-width="1"/>
+  </svg>
+  <span class="footer-copy">Matemática · Datos · IA · 2025</span>
+</footer>
+
+</body>
+</html>
